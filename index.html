@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>上海旅行规划指南</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      header {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 20px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .search-container {
+        background-color: white;
+        border-radius: 50px;
+        padding: 8px 15px;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .search-container i {
+        color: #7f8c8d;
+        margin-right: 10px;
+      }
+
+      #search-input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      .filters {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px 0;
+        margin-bottom: 10px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .filters::-webkit-scrollbar {
+        display: none;
+      }
+
+      .filter-btn {
+        background-color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 15px;
+        margin-right: 10px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .filter-btn.active {
+        background-color: #e74c3c;
+        color: white;
+      }
+
+      .location-list {
+        display: grid;
+        gap: 15px;
+      }
+
+      .location-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .location-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .location-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .location-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .location-area {
+        font-size: 0.85rem;
+        color: #e74c3c;
+        background-color: #ffeaea;
+        padding: 3px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+
+      .location-desc {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .location-metro {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #3498db;
+      }
+
+      .location-metro i {
+        margin-right: 5px;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 40px 20px;
+        color: #7f8c8d;
+      }
+
+      .no-results i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #bdc3c7;
+      }
+
+      .detail-view {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        z-index: 1000;
+        padding: 20px;
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      }
+
+      .detail-view.active {
+        transform: translateX(0);
+      }
+
+      .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .back-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        color: #7f8c8d;
+      }
+
+      .detail-content h2 {
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .detail-area {
+        color: #e74c3c;
+        font-weight: 500;
+        margin-bottom: 15px;
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #ffeaea;
+        border-radius: 10px;
+      }
+
+      .detail-image {
+        width: 100%;
+        height: 220px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin-bottom: 20px;
+        background-color: #f0f0f0;
+      }
+
+      .detail-desc {
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .detail-metro {
+        background-color: #f0f7ff;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .detail-metro h3 {
+        margin-bottom: 10px;
+        color: #3498db;
+        display: flex;
+        align-items: center;
+      }
+
+      .detail-metro h3 i {
+        margin-right: 8px;
+      }
+
+      .tips-section {
+        background-color: #fff9e6;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+
+      .tips-section h3 {
+        color: #f39c12;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .tips-section h3 i {
+        margin-right: 8px;
+      }
+
+      .image-error {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        color: #7f8c8d;
+      }
+
+      .image-error i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #bdc3c7;
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          max-width: 720px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <h1>上海旅行规划</h1>
+          <button id="view-toggle"><i class="fas fa-th-list"></i></button>
+        </div>
+        <div class="search-container">
+          <i class="fas fa-search"></i>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="搜索地点、区域或地铁站..."
+          />
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="人民广场">人民广场</button>
+        <button class="filter-btn" data-filter="新天地">新天地</button>
+        <button class="filter-btn" data-filter="静安寺">静安寺</button>
+        <button class="filter-btn" data-filter="徐汇">徐汇</button>
+        <button class="filter-btn" data-filter="陆家嘴">陆家嘴</button>
+        <button class="filter-btn" data-filter="浦东">浦东</button>
+        <button class="filter-btn" data-filter="长宁">长宁</button>
+        <button class="filter-btn" data-filter="虹桥">虹桥</button>
+        <button class="filter-btn" data-filter="远郊">远郊</button>
+      </div>
+
+      <div class="location-list" id="location-list">
+        <!-- 地点卡片将通过JavaScript动态生成 -->
+      </div>
+    </div>
+
+    <div class="detail-view" id="detail-view">
+      <div class="detail-header">
+        <button class="back-btn" id="back-btn">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 id="detail-title">地点详情</h1>
+        <div style="width: 40px"></div>
+        <!-- 占位元素保持平衡 -->
+      </div>
+      <div class="detail-content" id="detail-content">
+        <!-- 详情内容将通过JavaScript动态生成 -->
+      </div>
+    </div>
+
+    <script>
+      // 上海旅行地点数据，每个地点都添加了图片URL
+      const locations = [
+        {
+          id: 1,
+          name: "上海历史博物馆",
+          area: "人民广场及周边",
+          description: "综合反映上海地方历史及革命历史的博物馆，馆藏丰富。",
+          metro: "人民广场站（1、2、8号线）",
+          tips: "周一可能闭馆，建议提前确认开放时间。",
+          image:
+            "https://images.unsplash.com/photo-1585504182017-e9c5cf0b7b9a?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 2,
+          name: "上海博物馆人民广场馆",
+          area: "人民广场及周边",
+          description: "综合性古代艺术博物馆，以青铜器、陶瓷器等见长。",
+          metro: "人民广场站（1、2、8号线）",
+          tips: "免费参观，但需提前预约。",
+          image:
+            "https://images.unsplash.com/photo-1564501049418-3c27787d01e8?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 3,
+          name: "南京路步行街",
+          area: "人民广场及周边",
+          description: "著名商业街，购物与老字号集中地。",
+          metro: "南京东路站（2、10号线）",
+          tips: "适合晚上游览，夜景非常漂亮。",
+          image:
+            "https://images.unsplash.com/photo-1551641500-4c1e2d5c6c2c?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 4,
+          name: "中共一大会址纪念馆（新天地商圈）",
+          area: "新天地-复兴路片区",
+          description: "中国共产党诞生地，毗邻时尚新天地商圈。",
+          metro: "一大会址·黄陂南路站（13号线）、新天地站（10、13号线）",
+          tips: "免费参观，建议提前了解开放时间。",
+          image:
+            "https://images.unsplash.com/photo-1585504001013-954b5f3eca43?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 5,
+          name: "孙中山故居（近思南公馆、复兴公园）",
+          area: "新天地-复兴路片区",
+          description: "孙中山与宋庆龄故居，周边有思南公馆历史街区。",
+          metro: "一大会址·黄陂南路站（13号线）、陕西南路站（1、10、12号线）",
+          tips: "周边历史建筑众多，适合步行游览。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b7a?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 6,
+          name: "南京西路静安寺商圈（含上海自然博物馆）",
+          area: "静安寺-南京西路商圈",
+          description: "高端商圈与历史寺庙结合，上海自然博物馆也位于此。",
+          metro: "静安寺站（2、7、14号线）",
+          tips: "自然博物馆适合亲子游览，需提前预约。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b7b?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 7,
+          name: "宋庆龄故居（近武康大楼、上海交大）",
+          area: "徐汇衡复风貌区",
+          description: "宋庆龄生前居所，周边有武康大楼、交通大学徐汇校区。",
+          metro: "交通大学站（10、11号线）",
+          tips: "武康大楼是网红打卡地，适合拍照。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b7c?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 8,
+          name: "钟书阁（绿地缤纷城店）",
+          area: "徐汇衡复风貌区",
+          description: "特色连锁书店，设计风格鲜明。",
+          metro: "龙华中路站（7、12号线）",
+          tips: "书店设计独特，适合安静阅读和拍照。",
+          image:
+            "https://images.unsplash.com/photo-1544716278-e513176f20b5?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 9,
+          name: "陆家嘴-世纪大道商圈",
+          area: "陆家嘴-世纪大道沿线",
+          description: "金融中心，东方明珠、上海中心等地标所在地。",
+          metro: "陆家嘴站（2号线）、世纪大道站（2、4、6、9号线）",
+          tips: "登东方明珠或上海中心可俯瞰全城，建议提前购票。",
+          image:
+            "https://images.unsplash.com/photo-1549451371-64aa98a6f660?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 10,
+          name: "上海科技馆",
+          area: "陆家嘴-世纪大道沿线",
+          description: "大型科普教育场馆。",
+          metro: "上海科技馆站（2号线）",
+          tips: "适合亲子游览，内容丰富。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b7d?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 11,
+          name: "上海博物馆东馆",
+          area: "陆家嘴-世纪大道沿线",
+          description: "上博新馆，侧重古代艺术通史陈列。",
+          metro: "上海科技馆站（2号线）",
+          tips: "与人民广场馆内容互补，建议都参观。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b7e?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 12,
+          name: "上海图书馆东馆",
+          area: "陆家嘴-世纪大道沿线",
+          description: "现代智慧图书馆。",
+          metro: "上海科技馆站（2号线）",
+          tips: "建筑设计现代，适合学习阅读。",
+          image:
+            "https://images.unsplash.com/photo-1548048026-5a1a9400b5c1?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 13,
+          name: "前滩太古里（含茑屋书店）",
+          area: "浦东新兴商圈",
+          description: "新兴商业地标，内含茑屋书店。",
+          metro: "东方体育中心站（6、8、11号线）",
+          tips: "茑屋书店是日本知名书店品牌，值得一逛。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b7f?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 14,
+          name: "世博源",
+          area: "浦东新兴商圈",
+          description: "2010年世博会改造的商业综合体。",
+          metro: "中华艺术宫站（8号线）",
+          tips: "周边有中华艺术宫，可一并游览。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b80?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 15,
+          name: "环球港",
+          area: "长宁-普陀商圈",
+          description: "大型购物中心，集商业与文化于一体。",
+          metro: "金沙江路站（3、4、13号线）",
+          tips: "商场规模大，品牌齐全，适合购物。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b81?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 16,
+          name: "龙之梦城市生活中心（长宁店）",
+          area: "长宁-普陀商圈",
+          description: "综合购物中心，位于中山公园商圈。",
+          metro: "中山公园站（2、3、4号线）",
+          tips: "交通便利，周边有中山公园可游览。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b82?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 17,
+          name: "上海荟聚（宜家荟聚中心）",
+          area: "虹桥临空区域",
+          description: "大型商业综合体，包含宜家家居等。",
+          metro: "淞虹路站（2号线）",
+          tips: "宜家家居是亮点，适合家居购物。",
+          image:
+            "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 18,
+          name: "上海天文馆",
+          area: "远郊特色场馆",
+          description: "全球最大天文馆之一，位于临港新区。",
+          metro: "滴水湖站（16号线）",
+          tips: "位置较远，建议单独安排全天行程。",
+          image:
+            "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 19,
+          name: "上海迪士尼度假区",
+          area: "远郊特色场馆",
+          description: "主题乐园与度假区。",
+          metro: "迪士尼站（11号线）",
+          tips: "需提前购票，建议工作日前往减少排队。",
+          image:
+            "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 20,
+          name: "中国乒乓球博物馆",
+          area: "其他文化场馆",
+          description: "乒乓球主题博物馆，位于黄浦滨江。",
+          metro: "鲁班路站（4号线）、西藏南路站（4、8号线）",
+          tips: "对乒乓球爱好者特别有吸引力。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b83?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 21,
+          name: "瑞虹天地太阳宫",
+          area: "虹口北外滩商圈",
+          description:
+            "大型商业综合体，位于瑞虹新城，拥有特色餐饮、亲子娱乐和创意零售。",
+          metro: "临平路站（4号线）",
+          tips: "新开业的商业综合体，设施现代。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b84?w=800&auto=format&fit=crop",
+        },
+        {
+          id: 22,
+          name: "上海静安大悦城",
+          area: "静安苏河湾商圈",
+          description:
+            "大型购物中心，以屋顶摩天轮和潮流艺术装置为特色，毗邻苏河湾。",
+          metro: "曲阜路站（8、12号线）",
+          tips: "屋顶摩天轮是特色，适合情侣约会。",
+          image:
+            "https://images.unsplash.com/photo-1585504000833-0f0c2f5b0b85?w=800&auto=format&fit=crop",
+        },
+      ];
+
+      // 初始化页面
+      document.addEventListener("DOMContentLoaded", function () {
+        renderLocationCards(locations);
+        setupEventListeners();
+      });
+
+      // 渲染地点卡片
+      function renderLocationCards(locationsToRender) {
+        const locationList = document.getElementById("location-list");
+
+        if (locationsToRender.length === 0) {
+          locationList.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>没有找到匹配的地点</p>
+                        <p>尝试使用其他关键词或筛选条件</p>
+                    </div>
+                `;
+          return;
+        }
+
+        locationList.innerHTML = locationsToRender
+          .map(
+            (location) => `
+                <div class="location-card" data-id="${location.id}">
+                    <div class="location-header">
+                        <div>
+                            <div class="location-name">${location.name}</div>
+                            <span class="location-area">${location.area}</span>
+                        </div>
+                    </div>
+                    <div class="location-desc">${location.description}</div>
+                    <div class="location-metro">
+                        <i class="fas fa-subway"></i>
+                        ${location.metro}
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+
+        // 添加卡片点击事件
+        document.querySelectorAll(".location-card").forEach((card) => {
+          card.addEventListener("click", function () {
+            const locationId = parseInt(this.getAttribute("data-id"));
+            showLocationDetail(locationId);
+          });
+        });
+      }
+
+      // 显示地点详情
+      function showLocationDetail(locationId) {
+        const location = locations.find((loc) => loc.id === locationId);
+        if (!location) return;
+
+        const detailView = document.getElementById("detail-view");
+        const detailTitle = document.getElementById("detail-title");
+        const detailContent = document.getElementById("detail-content");
+
+        detailTitle.textContent = location.name;
+
+        detailContent.innerHTML = `
+                <div class="detail-area">${location.area}</div>
+                <div class="detail-desc">${location.description}</div>
+                
+                <div class="detail-metro">
+                    <h3><i class="fas fa-subway"></i>交通信息</h3>
+                    <p>${location.metro}</p>
+                </div>
+                
+                <div class="tips-section">
+                    <h3><i class="fas fa-lightbulb"></i>游览提示</h3>
+                    <p>${location.tips}</p>
+                </div>
+            `;
+
+        detailView.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      // 设置事件监听器
+      function setupEventListeners() {
+        // 搜索功能
+        const searchInput = document.getElementById("search-input");
+        searchInput.addEventListener("input", function () {
+          filterLocations();
+        });
+
+        // 筛选按钮
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            document.querySelectorAll(".filter-btn").forEach((b) => {
+              b.classList.remove("active");
+            });
+            this.classList.add("active");
+            filterLocations();
+          });
+        });
+
+        // 返回按钮
+        document
+          .getElementById("back-btn")
+          .addEventListener("click", function () {
+            const detailView = document.getElementById("detail-view");
+            detailView.classList.remove("active");
+            document.body.style.overflow = "auto";
+          });
+
+        // 视图切换按钮
+        document
+          .getElementById("view-toggle")
+          .addEventListener("click", function () {
+            // 这里可以添加切换视图的功能
+            alert("视图切换功能开发中...");
+          });
+      }
+
+      // 筛选地点
+      function filterLocations() {
+        const searchTerm = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+        const activeFilter = document
+          .querySelector(".filter-btn.active")
+          .getAttribute("data-filter");
+
+        let filteredLocations = locations;
+
+        // 根据搜索词筛选
+        if (searchTerm) {
+          filteredLocations = filteredLocations.filter(
+            (location) =>
+              location.name.toLowerCase().includes(searchTerm) ||
+              location.area.toLowerCase().includes(searchTerm) ||
+              location.description.toLowerCase().includes(searchTerm) ||
+              location.metro.toLowerCase().includes(searchTerm),
+          );
+        }
+
+        // 根据区域筛选
+        if (activeFilter !== "all") {
+          filteredLocations = filteredLocations.filter((location) =>
+            location.area.includes(activeFilter),
+          );
+        }
+
+        renderLocationCards(filteredLocations);
+      }
+    </script>
+  </body>
+</html>
