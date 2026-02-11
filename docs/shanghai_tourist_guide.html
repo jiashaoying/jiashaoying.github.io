@@ -19,6 +19,11 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
 
     <script>
       tailwind.config = {
@@ -467,8 +472,18 @@
               >
                 <i class="fas fa-images text-shanghai-red mr-2"></i> 照片
               </h3>
-              <div id="photos-container">
-                <!-- Photos injected here -->
+              <div class="relative">
+                <!-- Swiper 轮播图 -->
+                <div class="swiper photos-swiper">
+                  <div class="swiper-wrapper" id="photos-container">
+                    <!-- Photos injected here -->
+                  </div>
+                  <!-- 导航按钮 -->
+                  <div class="swiper-button-prev"></div>
+                  <div class="swiper-button-next"></div>
+                  <!-- 分页器 -->
+                  <div class="swiper-pagination"></div>
+                </div>
               </div>
             </div>
 
@@ -534,6 +549,8 @@
       </div>
     </div>
 
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <!-- JavaScript 逻辑 -->
     <script>
       // 1. 数据源
@@ -550,7 +567,33 @@
           name: "上海外滩",
           desc: "上海的标志性景观带，汇集了52幢风格迥异的古典复兴大楼，素有'万国建筑博览群'之称，隔江对望陆家嘴现代金融区，是欣赏黄浦江两岸风光的最佳地点。",
           metro: "南京东路站（2、10号线）",
-          photos: [],
+          photos: [
+            "https://images.unsplash.com/photo-1501612780327-45045538702b?w=800&q=80",
+            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80",
+            "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80"
+          ],
+        },
+        {
+          region: "远郊特色场馆",
+          name: "上海海昌海洋公园",
+          desc: "集海洋文化、科普教育、互动娱乐、休闲度假为一体的主题公园，拥有全球最大的极地海洋馆，展示珍稀海洋生物，提供精彩的海洋动物表演。",
+          metro: "临港大道站（16号线）",
+          photos: [
+            "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80",
+            "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800&q=80",
+            "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
+          ],
+        },
+        {
+          region: "远郊特色场馆",
+          name: "耀雪冰雪世界",
+          desc: "大型室内滑雪场，拥有专业级滑雪道和戏雪区域，适合不同水平的滑雪爱好者，同时提供冰雪主题娱乐项目，是四季皆宜的冰雪体验胜地。",
+          metro: "临港大道站（16号线）",
+          photos: [
+            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+            "https://images.unsplash.com/photo-1485579149621-3123dd979885?w=800&q=80",
+            "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80"
+          ],
         },
         {
           region: "人民广场及周边",
@@ -683,14 +726,33 @@
           name: "上海天文馆",
           desc: "全球最大天文馆之一，位于临港新区。",
           metro: "滴水湖站（16号线）",
-          photos: [],
+          photos: [
+            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+            "https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=800&q=80",
+            "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80"
+          ],
         },
         {
           region: "远郊特色场馆",
           name: "上海迪士尼度假区",
           desc: "主题乐园与度假区。",
           metro: "迪士尼站（11号线）",
-          photos: [],
+          photos: [
+            "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80",
+            "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=800&q=80",
+            "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&q=80"
+          ],
+        },
+        {
+          region: "远郊特色场馆",
+          name: "上海乐高乐园度假区",
+          desc: "全球知名的乐高主题乐园，包含乐高积木搭建的创意建筑、互动游乐设施和精彩表演，适合全家亲子游玩。",
+          metro: "淀山湖大道站（17号线）",
+          photos: [
+            "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80",
+            "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800&q=80",
+            "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
+          ],
         },
         {
           region: "其他文化场馆",
@@ -943,25 +1005,33 @@
         document.getElementById("modal-metro-text").innerText =
           item.metro.split("（")[0];
 
-        // 生成照片展示（只显示第一张）
+        // 生成照片轮播图
         const photosContainer = document.getElementById("photos-container");
         if (item.photos && item.photos.length > 0) {
-          const mainPhoto = item.photos[0];
-          photosContainer.innerHTML = `
-            <div class="relative overflow-hidden rounded-xl aspect-video bg-gray-100 group cursor-pointer" onclick="window.open('${mainPhoto}', '_blank')">
-              <img 
-                src="${mainPhoto}" 
-                alt="景点照片" 
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-              <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <i class="fas fa-expand text-xs text-gray-600"></i>
+          photosContainer.innerHTML = item.photos
+            .map(
+              (photo) => `
+              <div class="swiper-slide">
+                <div class="relative overflow-hidden rounded-xl aspect-video bg-gray-100 group cursor-pointer" onclick="window.open('${photo}', '_blank')">
+                  <img
+                    src="${photo}"
+                    alt="景点照片"
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                  <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i class="fas fa-expand text-xs text-gray-600"></i>
+                  </div>
+                </div>
               </div>
-            </div>
-          `;
+            `
+            )
+            .join("");
           document.getElementById("modal-photos").classList.remove("hidden");
+
+          // 初始化 Swiper
+          initializeSwiper();
         } else {
           photosContainer.innerHTML = `
             <div class="text-center py-8 text-gray-400">
@@ -1170,6 +1240,39 @@
 
       function showNotImplemented(feature) {
         alert(`${feature}功能暂未实现`);
+      }
+
+      // 初始化 Swiper 轮播图
+      function initializeSwiper() {
+        // 先销毁已存在的实例
+        if (window.photosSwiper) {
+          window.photosSwiper.destroy();
+        }
+
+        // 获取当前轮播图的照片数量
+        const slides = document.querySelectorAll(".swiper-slide");
+        const hasMultipleSlides = slides.length > 1;
+
+        // 初始化新实例
+        window.photosSwiper = new Swiper(".photos-swiper", {
+          slidesPerView: 1,
+          spaceBetween: 0,
+          loop: hasMultipleSlides,
+          autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+          },
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+          effect: "slide",
+          speed: 300,
+        });
       }
 
       // 启动
